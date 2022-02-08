@@ -57,17 +57,26 @@ module Prawn
         File.join(File.dirname(path), "#{@set}.yml")
       end
 
+      def font_path(key)
+        font_files = {
+          fab: "fa-brands.ttf",
+          far: "fa-regular.ttf",
+          fas: "fa-solid.ttf",
+          fi: "foundation-icons.ttf",
+          pf: "paymentfont-webfont.ttf"
+        }
+        path = Icon.configuration.font_directory.to_s + "/" + key.to_s + "/" + font_files.fetch(key)
+        File.expand_path(path)
+      end
+
       def load_fonts(document)
         document.font_families[@set.to_s] ||= { normal: path }
         self
       end
 
       def path
-        font = Icon.configuration.font_directory
-          .join(@set.to_s)
-          .glob('*.ttf')
-          .first
-
+        font = font_path(@set)
+      
         if font.nil?
           raise Prawn::Errors::UnknownFont,
                 "Icon font not found for set: #{@set}"
